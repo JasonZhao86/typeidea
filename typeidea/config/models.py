@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
 
 
 class Link(models.Model):
@@ -32,11 +33,16 @@ class SideBar(models.Model):
         (STATUS_SHOW, "显示"),
         (STATUS_HIDE, "隐藏"),
     ]
+
+    DISPLAY_HTML = 1
+    DISPLAY_LATEST = 2
+    DISPLAY_HOT = 3
+    DISPLAY_COMMENT = 4
     SIDE_TYPE = [
-        (1, "HTML"),
-        (2, "最新文章"),
-        (3, "最热文章"),
-        (4, "最近评论"),
+        (DISPLAY_HTML, "HTML"),
+        (DISPLAY_LATEST, "最新文章"),
+        (DISPLAY_HOT, "最热文章"),
+        (DISPLAY_COMMENT, "最近评论"),
     ]
 
     title = models.CharField(max_length=50, verbose_name="标题")
@@ -52,3 +58,29 @@ class SideBar(models.Model):
 
     def __str__(self):
         return "<SideBar: {}>".format(self.title)
+
+    @classmethod
+    def get_all(cls):
+        return cls.objects.filter(status=cls.STATUS_SHOW)
+
+    def get_sidebar_content_html(self):
+        """”
+            直接渲染模板；
+            将导入语句写入函数中防止循环引用，因为bog和comment app的models中将来也有可能引用config app的models
+        """
+        from blog.models import Post
+        from comment.models import Comment
+
+        result = ''
+        if self.display_type == self.DISPLAY_HTML:
+            result = self.content
+        elif self.display_type == self.DISPLAY_LATEST:
+            context = {"posts": Post.get_lastest_post()}
+            result = render_to_string("config/blocks/sidebar_posts.html", context=context)
+        elif self.display_type == self.DISPLAY_HOT:
+            context = {"posts": Post.get_hot_posts().only("id", "title")}
+            result = render_to_string("config/blocks/sidebar_posts.html", context=context)
+        elif self.display_type == self.DISPLAY_COMMENT:
+            context = {"comments": Comment.get_all().only("target", "nickname", "content")}
+            result = render_to_string("config/blocks/sidebar_comments.html", context=context)
+        return result

@@ -23,3 +23,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return "<Comment: {}>".format(self.target)
+
+    @classmethod
+    def get_all(cls):
+        return cls.objects.filter(status=cls.STATUS_NORMAL).select_related("target")

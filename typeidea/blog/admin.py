@@ -76,7 +76,10 @@ class PostAdmin(BaseOwnerAdmin):
         ("其他配置", {
             # 定义css样式，内置的collapse class显示为折叠，wide class为展开
             "classes": ("wide", ),
-            "fields": ("tag", )
+            "fields": (
+                "tag",
+                ("pv", "uv"),
+            )
         })
     ]
 

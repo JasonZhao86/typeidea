@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}首页{% endblock %} | Typeidea博客系统</title>
+</head>
+<body>
+    {% block nav_categories %}
+        <div>顶部分类：
+        {% for category in nav_categories %}
+            <a href="{% url 'post_list_by_category' category.id %}">{{ category.name }}</a>
+        {% endfor %}
+        </div>
+        <hr />
+    {% endblock %}
+
+    {% block main %}{% endblock %}
+
+    {% block normal_categories %}
+        <hr />
+        {% for category in normal_categories %}
+            <a href="{% url 'post_list_by_category' category.id %}">{{ category.name }}</a>
+        {% endfor %}
+    {% endblock %}
+
+    {% block sidebar %}
+        <div>侧边栏展示：
+            {% for sidbar in sidebars %}
+                <h4>{{ sidbar.title }}</h4>
+                {{ sidbar.get_sidebar_content_html }}
+            {% endfor %}
+        </div>
+    {% endblock %}
+</body>
+</html>
