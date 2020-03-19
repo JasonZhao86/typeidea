@@ -1,0 +1,23 @@
+{% extends "blog/base.html" %}
+{% block title %}Post详情页: {{ post.title }}| typeidea博客系统{% endblock %}
+
+{% block content %}
+    {% if post %}
+        <div class="card post">
+            <div class="card-body">
+                <h1 class="card-title">{{ post.title}}</h1>
+                <span class="card-link">作者：<a href="#">{{ post.owner.username }}</a></span>
+                <span class="card-link">分类：
+                    <a href="{% url 'post_list_by_category' post.category.id %}">{{ post.category.name }}</a>
+                </span>
+                <span class="card-link">标签：
+                    {% for tag in post.tag.all %}
+                        <a href="{% url 'post_list_by_tag' tag.id %}">{{ tag.name }}</a>
+                    {% endfor %}
+                </span>
+                <p class="card-text">{{ post.content }}</p>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+

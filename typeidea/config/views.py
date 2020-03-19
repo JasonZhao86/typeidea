@@ -3,4 +3,4 @@ from django.http import HttpResponse
 
 
 def links(request):
-    return render(request, "config/list.html", {"name": "links"})
+    return render(request, "config/links.html", {"name": "links"})
