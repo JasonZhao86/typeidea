@@ -7,6 +7,7 @@
         <!--<link rel="stylesheet" media="screen" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" />-->
         {% load static %}
         <link rel="stylesheet" media="screen" href="{% static 'css/bootstrap.css' %}" />
+        {% block extra_header %}{% endblock %}
         <style>
             .post {
                 margin-bottom: 5px;

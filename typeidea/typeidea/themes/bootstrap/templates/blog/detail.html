@@ -2,6 +2,13 @@
 {% load comment_block %}
 {% block title %}Post详情页: {{ post.title }}| typeidea博客系统{% endblock %}
 
+{% block extra_header %}
+    {# 避免在首页加载代码高亮为了防止这些资源加载拖慢首页的响应速度 #}
+    <link rel="stylesheet" href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}
+
 {% block content %}
     {% if post %}
         <div class="card post">
@@ -20,7 +27,9 @@
                         <a href="{% url 'post_list_by_tag' tag.id %}">{{ tag.name }}</a>
                     {% endfor %}
                 </span>
-                <p class="card-text">{{ post.content }}</p>
+                {% autoescape off %}
+                    <p class="card-text">{{ post.content_html }}</p>
+                {% endautoescape %}
             </div>
         </div>
     {% endif %}
