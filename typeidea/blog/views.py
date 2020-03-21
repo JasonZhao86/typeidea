@@ -1,7 +1,11 @@
+from datetime import date
+
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from django.db.models import Q
+from django.db.models import Q, F
 from django.views.generic import ListView, DetailView
+from django.core.cache import cache
+
 from .models import Tag, Post, Category
 from config.models import SideBar
 from comment.forms import CommentForm
@@ -16,6 +20,39 @@ class CommonViewMixin:
         })
         context.update(Category.get_nav())
         return context
+
+
+class HandleVisitedMixin:
+    def get(self, request, *args, **kwargs):
+        """
+            handle_visited中要用self.object，必须先调用基类的get方法，因为基类DetailView中
+            的BaseDetailView的get方法实现了self.object属性的塞入。
+        """
+        response = super().get(request, *args, **kwargs)
+        self.handle_visited()
+        return response
+
+    def handle_visited(self):
+        increase_uv = False
+        increase_pv = False
+        pv_key = "pv:{}{}".format(self.request.uid, self.request.path)
+        uv_key = "uv:{}{}{}".format(self.request.uid, str(date.today()), self.request.path)
+
+        # 利用缓存的过期时间来控制是否统计同一用户的访问次数。
+        if not cache.get(pv_key):
+            increase_pv = True
+            # 60秒内来自同一用户对同一页面的多次访问只计为一次
+            cache.set(pv_key, 1, 60)
+        if not cache.get(uv_key):
+            increase_uv = True
+            cache.set(uv_key, 1, 60 * 60 * 24)
+
+        if increase_uv and increase_pv:
+            Post.objects.filter(pk=self.object.id).update(uv=F("uv") + 1, pv=F("pv") + 1)
+        elif increase_uv:
+            Post.objects.filter(pk=self.object.id).update(uv=F("uv") + 1)
+        elif increase_pv:
+            Post.objects.filter(pk=self.object.id).update(pv=F("pv") + 1)
 
 
 class IndexView(CommonViewMixin, ListView):
@@ -57,7 +94,7 @@ class TagView(IndexView):
         return context
 
 
-class PostDetailView(CommonViewMixin, DetailView):
+class PostDetailView(HandleVisitedMixin, CommonViewMixin, DetailView):
     queryset = Post.get_lastest_post()
     pk_url_kwarg = "post_id"
     context_object_name = "post"

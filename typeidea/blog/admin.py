@@ -52,7 +52,7 @@ class CategoryOwnerFilter(admin.SimpleListFilter):
 @admin.register(Post, site=custom_site)
 class PostAdmin(BaseOwnerAdmin):
     form = PostAdminForm
-    list_display = ("title", "category", "status", "created_time", "owner", "operator")
+    list_display = ("title", "category", "status", "created_time", "owner", "pv", "uv", "operator")
     list_display_links = ("title",)   # 默认list_display列表中的第一项显示为超链接
     list_filter = [CategoryOwnerFilter, ]
     search_fields = ["title", "category__name"]  # category为对象，通过双下划线访问对象的属性
