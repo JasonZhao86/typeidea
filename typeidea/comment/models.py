@@ -1,4 +1,8 @@
+import re
+
 from django.db import models
+from django.shortcuts import get_object_or_404
+
 from blog.models import Post
 
 
@@ -10,7 +14,8 @@ class Comment(models.Model):
         (STATUS_DELETE, "删除"),
     ]
 
-    target = models.ForeignKey(Post, verbose_name="文章")
+    # target = models.ForeignKey(Post, verbose_name="文章")
+    target = models.CharField(max_length=100, verbose_name="评论目标")
     content = models.CharField(max_length=2000, verbose_name="内容")
     nickname = models.CharField(max_length=50, verbose_name="昵称")
     website = models.URLField(verbose_name="网站")
@@ -25,5 +30,15 @@ class Comment(models.Model):
         return "<Comment: {}>".format(self.target)
 
     @classmethod
+    def get_comments_by_post_url(cls, target):
+        return cls.objects.filter(status=cls.STATUS_NORMAL, target=target)
+
+    @classmethod
     def get_all(cls):
-        return cls.objects.filter(status=cls.STATUS_NORMAL).select_related("target")
+        return cls.objects.filter(status=cls.STATUS_NORMAL)
+
+    def get_post_title_by_comment_target(self):
+        re_obj = re.compile("(?P<post_id>\d+)\.html", flags=re.IGNORECASE)
+        result = re_obj.search(self.target)
+        post = get_object_or_404(Post, pk=result.group("post_id"))
+        return post.title if post else self.target

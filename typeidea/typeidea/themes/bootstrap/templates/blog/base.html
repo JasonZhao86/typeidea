@@ -29,8 +29,10 @@
                                 </li>
                             {% endfor %}
                         </ul>
-                        <form class="form-inline my-2 my-lg-0">
-                            <input type="search" placeholder="Search" class="form-control mr-sm-2" aria-label="Search" />
+                        <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}" method="get">
+                            <input type="search" placeholder="Search"
+                                   name="keyword" value="{{ keyword }}"
+                                   class="form-control mr-sm-2" aria-label="Search" />
                             <button class="btn btn-outline-success" type="submit">搜索</button>
                         </form>
                     </div>

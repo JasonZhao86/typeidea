@@ -1,6 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.views.generic import ListView
+
+from blog.views import CommonViewMixin
+from .models import Link
 
 
-def links(request):
-    return render(request, "config/links.html", {"name": "links"})
+class LinkView(CommonViewMixin, ListView):
+    queryset = Link.get_all()
+    context_object_name = "link_list"
+    template_name = "config/links.html"

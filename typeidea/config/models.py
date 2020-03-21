@@ -25,6 +25,10 @@ class Link(models.Model):
     def __str__(self):
         return "<Link: {}>".format(self.title)
 
+    @classmethod
+    def get_all(cls):
+        return Link.objects.filter(status=cls.STATUS_NORMAL)
+
 
 class SideBar(models.Model):
     STATUS_SHOW = 1
@@ -81,6 +85,6 @@ class SideBar(models.Model):
             context = {"posts": Post.get_hot_posts().only("id", "title")}
             result = render_to_string("config/blocks/sidebar_posts.html", context=context)
         elif self.display_type == self.DISPLAY_COMMENT:
-            context = {"comments": Comment.get_all().only("target", "nickname", "content")}
+            context = {"comments": Comment.get_all()}
             result = render_to_string("config/blocks/sidebar_comments.html", context=context)
         return result

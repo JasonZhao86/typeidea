@@ -1,8 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.db.models import Q
 from django.views.generic import ListView, DetailView
 from .models import Tag, Post, Category
 from config.models import SideBar
+from comment.forms import CommentForm
+from comment.models import Comment
 
 
 class CommonViewMixin:
@@ -59,6 +62,42 @@ class PostDetailView(CommonViewMixin, DetailView):
     pk_url_kwarg = "post_id"
     context_object_name = "post"
     template_name = "blog/detail.html"
+
+    """
+    # 根据开闭原则，开放扩展，关闭修改，在postdetail页面增加comment评论功能不应该直接修改PostDetailView的
+    # 相关代码，而是通过增加扩展的方式来实现，这里通过自定义模板标签实现。
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "comment_form": CommentForm(),
+            "comment_list": Comment.get_comments_by_post_url(self.request.path),
+        })
+        return context
+    """
+
+
+class SearchView(IndexView):
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        keyword = self.request.GET.get("keyword", "")
+        if not keyword:
+            return queryset
+        return queryset.filter(Q(title__icontains=keyword) | Q(desc__icontains=keyword))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        keyword = self.request.GET.get("keyword", "")
+        context.update({
+            "keyword": keyword
+        })
+        return context
+
+
+class AuthorView(IndexView):
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        author_id = self.kwargs.get("author_id", 1)
+        return queryset.filter(owner__id=author_id)
 
 
 """

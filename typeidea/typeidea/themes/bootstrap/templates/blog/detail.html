@@ -1,4 +1,5 @@
 {% extends "blog/base.html" %}
+{% load comment_block %}
 {% block title %}Post详情页: {{ post.title }}| typeidea博客系统{% endblock %}
 
 {% block content %}
@@ -6,7 +7,11 @@
         <div class="card post">
             <div class="card-body">
                 <h1 class="card-title">{{ post.title}}</h1>
-                <span class="card-link">作者：<a href="#">{{ post.owner.username }}</a></span>
+                <span class="card-link">作者：
+                    <a href="{% url 'post_list_by_author' post.owner.id %}">
+                        {{ post.owner.username }}
+                    </a>
+                </span>
                 <span class="card-link">分类：
                     <a href="{% url 'post_list_by_category' post.category.id %}">{{ post.category.name }}</a>
                 </span>
@@ -19,5 +24,36 @@
             </div>
         </div>
     {% endif %}
+
+    {# 'post_comment_and_comment_list'里面的代码全部挪到了comment_block这个自定义标签所用到的html子页面中了 #}
+    {% comment_block request %}
+
+    {% comment "post_comment_and_comment_list" %}
+        在post detail页面增加评论功能，根据开闭原则不应该直接修改原先postdetail的代码，而是增加扩展，
+     这里采用自定义标签的方式扩展
+    <hr />
+    <div class="comment">
+        <form class="form-group" action="{% url 'comment' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="target" value="{{ request.path }}" />
+            {{ comment_form }}
+            <input type="submit" value="提交" />
+        </form>
+
+        <ul class="list-group">
+            {% for comment in comment_list %}
+                <li class="list-group-item">
+                    <div class="nickname">
+                        <a href="{{ comment.website }}">{{ comment.nickname }}</a>
+                        <span>{{ comment.created_time }}</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>{{ comment.content }}</p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endcomment %}
 {% endblock %}
 
