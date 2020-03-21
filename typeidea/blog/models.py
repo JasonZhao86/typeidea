@@ -1,3 +1,5 @@
+import mistune
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -74,6 +76,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255, verbose_name="标题")
     desc = models.CharField(max_length=1024, blank=True, verbose_name="摘要")
     content = models.TextField(verbose_name="正文", help_text="正文必须为MarkDown格式")
+    content_html = models.TextField(verbose_name="mistune转码后的html正文", blank=True, editable=False)
     status = models.PositiveIntegerField(default=STATUS_NORMAL, choices=STATUS_ITEMS, verbose_name="状态")
     category = models.ForeignKey(Category, verbose_name="分类")
     tag = models.ManyToManyField(Tag, verbose_name="标签")
@@ -88,6 +91,18 @@ class Post(models.Model):
 
     def __str__(self):
         return "<Post: {}>".format(self.title)
+
+    # save方法有很多参数，这里为了简洁，直接使用*args和**kwargs代替
+    def save(self, *args, **kwargs):
+        """
+            在Post中增加content_html字段存储mistune转码后的html内容是考虑到文章的内容需要经常修改，
+            如果文章保存时在post的AdminForm中直接将mistune转码后的html代码存储到content字段，而后
+            作者再次修改文章内容时返回的是转码后的html代码，而不是markdown格式的代码，这显然不合适，
+            因此增加content_html字段是为了显示用，原先的content字段是为了写入post文章时展示为编辑者
+            用的。
+        """
+        self.content_html = mistune.markdown(self.content)
+        super(Post, self).save(*args, **kwargs)
 
     @staticmethod
     def get_post_by_tag(tag_id):
