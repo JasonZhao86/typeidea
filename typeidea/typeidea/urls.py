@@ -25,6 +25,8 @@ from blog.views import (
 from config.views import LinkView
 from comment.views import CommentView
 
+import xadmin
+
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name="post_list"),
@@ -35,6 +37,7 @@ urlpatterns = [
     url(r'^keyword/$', SearchView.as_view(), name="search"),
     url(r'^links/$', LinkView.as_view(), name="links"),
     url(r'^comment/$', CommentView.as_view(), name="comment"),
-    url(r'^super_admin/', admin.site.urls, name="super_admin"),
-    url(r'^admin/', custom_site.urls, name="admin"),
+    # url(r'^super_admin/', admin.site.urls, name="super_admin"),
+    # url(r'^admin/', custom_site.urls, name="admin"),
+    url(r'^admin/', xadmin.site.urls, name="xadmin"),
 ]

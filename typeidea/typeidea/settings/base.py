@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'xadmin',
+    'crispy_forms',
     'typeidea',
     'blog',
     'config',
@@ -115,7 +117,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 STATIC_ROOT = "/var/www/html"
+
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "themes", THEME, "static"),
 ]
+
+XADMIN_TITLE = "Typeidea管理后台"
+
+XADMIN_FOOTER_TITLE = "Powered by HP Bridge"
