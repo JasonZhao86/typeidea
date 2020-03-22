@@ -83,11 +83,6 @@ class PostAdmin(BaseOwnerAdmin):
             "desc",
             "content",
         ),
-        Fieldset(
-            "其他配置",
-            "pv",
-            "uv",
-        )
     ]
 
     # 将多对多字段显示为左右选项卡的形式，而非默认的多选select标签

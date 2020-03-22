@@ -1,5 +1,6 @@
 -i http://pypi.doubanio.com/simple/
 Django~=1.11
 mistune=0.8.4
-xadmin==0.6.1
+xadmin=0.6.1
+django-autocomplete-light=3.2.10
 -e .

@@ -24,6 +24,7 @@ from blog.views import (
 )
 from config.views import LinkView
 from comment.views import CommentView
+from typeidea.autocomplete import CategoryAutocomplete, TagAutocomplete
 
 import xadmin
 
@@ -37,6 +38,8 @@ urlpatterns = [
     url(r'^keyword/$', SearchView.as_view(), name="search"),
     url(r'^links/$', LinkView.as_view(), name="links"),
     url(r'^comment/$', CommentView.as_view(), name="comment"),
+    url(r'^category_autocomplete/$', CategoryAutocomplete.as_view(), name="category_autocomplete"),
+    url(r'^tag_autocomplete/$', TagAutocomplete.as_view(), name="tag_autocomplete"),
     # url(r'^super_admin/', admin.site.urls, name="super_admin"),
     # url(r'^admin/', custom_site.urls, name="admin"),
     url(r'^admin/', xadmin.site.urls, name="xadmin"),
