@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'dal',
     'dal_select2',
+    'ckeditor',
+    'ckeditor_uploader',
     'typeidea',
     'blog',
     'config',
@@ -129,3 +131,23 @@ STATICFILES_DIRS = [
 XADMIN_TITLE = "Typeidea管理后台"
 
 XADMIN_FOOTER_TITLE = "Powered by HP Bridge"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 800,
+        'tabSpaces': 4,
+        'extraPlugins': 'codesnippet',    # 配置代码插件
+    }
+}
+
+# 最终的上传图片的URL类似于：/media/article_images/2020/03/23/python.jpg
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# 图片存储在本地文件系统目录：media/article_images
+CKEDITOR_UPLOAD_PATH = "article_images"
+
+DEFAULT_FILE_STORAGE = "typeidea.storage.WatermarkStorage"

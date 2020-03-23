@@ -82,6 +82,7 @@ class Post(models.Model):
     tag = models.ManyToManyField(Tag, verbose_name="标签")
     owner = models.ForeignKey(User, verbose_name="作者")
     created_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+    is_md = models.BooleanField(default=False, verbose_name="是否使用markdown语法")
     pv = models.PositiveIntegerField(default=1)
     uv = models.PositiveIntegerField(default=1)
 
@@ -101,7 +102,10 @@ class Post(models.Model):
             因此增加content_html字段是为了显示用，原先的content字段是为了写入post文章时展示为编辑者
             用的。
         """
-        self.content_html = mistune.markdown(self.content)
+        if self.is_md:
+            self.content_html = mistune.markdown(self.content)
+        else:
+            self.content_html = self.content
         super(Post, self).save(*args, **kwargs)
 
     @staticmethod

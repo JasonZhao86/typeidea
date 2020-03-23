@@ -13,8 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 
 from .custom_site import custom_site
 # from blog.views import post_list, post_detail        # function view
@@ -27,6 +29,7 @@ from comment.views import CommentView
 from typeidea.autocomplete import CategoryAutocomplete, TagAutocomplete
 
 import xadmin
+import ckeditor_uploader
 
 
 urlpatterns = [
@@ -40,7 +43,8 @@ urlpatterns = [
     url(r'^comment/$', CommentView.as_view(), name="comment"),
     url(r'^category_autocomplete/$', CategoryAutocomplete.as_view(), name="category_autocomplete"),
     url(r'^tag_autocomplete/$', TagAutocomplete.as_view(), name="tag_autocomplete"),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),   # ckeditor保存和浏览上传的图片的两个接口
     # url(r'^super_admin/', admin.site.urls, name="super_admin"),
     # url(r'^admin/', custom_site.urls, name="admin"),
     url(r'^admin/', xadmin.site.urls, name="xadmin"),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
