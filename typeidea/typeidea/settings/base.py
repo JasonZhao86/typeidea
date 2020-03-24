@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'dal_select2',
     'ckeditor',
     'ckeditor_uploader',
+    'rest_framework',
     'typeidea',
     'blog',
     'config',
@@ -151,3 +152,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 CKEDITOR_UPLOAD_PATH = "article_images"
 
 DEFAULT_FILE_STORAGE = "typeidea.storage.WatermarkStorage"
+
+# 新版drf的schema_class默认用的是rest_framework.schemas.openapi.AutoSchema，重新指定schema_class的配置，
+# 否则会抛AttributeError: 'AutoSchema' object has no attribute 'get_link'
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
+    'PAGE_SIZE': 2,
+}
