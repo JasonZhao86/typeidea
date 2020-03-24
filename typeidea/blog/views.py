@@ -6,6 +6,8 @@ from django.db.models import Q, F
 from django.views.generic import ListView, DetailView
 from django.core.cache import cache
 
+from silk.profiling.profiler import silk_profile
+
 from .models import Tag, Post, Category
 from config.models import SideBar
 from comment.forms import CommentForm
@@ -13,6 +15,8 @@ from comment.models import Comment
 
 
 class CommonViewMixin:
+    # 该装饰器用于统计被装饰函数执行时的耗时以及是否产生数据库查询，相当于埋点
+    @silk_profile(name="get_navs")
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
